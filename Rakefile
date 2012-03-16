@@ -163,7 +163,7 @@ class Packager
   def build(package_type, module_name)
     basedirectory = ENV["WORKSPACE"]
     version = "0.01"
-    iteration = "1"
+    build_number = ENV["BUILD_NUMBER"]
     packagename = "cegeka-puppet-#{module_name}"
     case package_type
     when "rpm"
@@ -175,12 +175,12 @@ class Packager
       delimiterb = "_"
       architecture = "all"
     end
-    destinationfile = "#{packagename}#{delimitera}#{version}-#{iteration}#{delimiterb}#{architecture}.#{package_type}"
+    destinationfile = "#{packagename}#{delimitera}#{version}-#{build_number}#{delimiterb}#{architecture}.#{package_type}"
     destinationfolder = "#{basedirectory}/#{module_name}/target/dist"
     url = "https://github.com/cegeka/puppet-#{module_name}"
     description = "Puppet module: #{module_name} by Cegeka\nModule #{module_name} description goes here."
     staticarguments = ["-t", package_type, "-s", "dir", "-x", ".git", "-a", architecture, "-m", "Cegeka <computing@cegeka.be>", "--prefix", "/etc/puppet/modules"]
-    vararguments = ["-n", packagename, "-v", version, "--iteration", iteration, "--url", url, "--description", description, "-C", basedirectory, module_name]
+    vararguments = ["-n", packagename, "-v", version, "--iteration", build_number, "--url", url, "--description", description, "-C", basedirectory, module_name]
     arguments = staticarguments | vararguments
   	
     tmpdir = Dir.mktmpdir
