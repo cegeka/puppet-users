@@ -1,6 +1,6 @@
 # == Definition: users::localuser
 #
-# Adds the specified user on the local system, and adds a public key to the 
+# Adds the specified user on the local system, and adds a public key to the
 # ~/.ssh/authorized_keys file, if provided.
 #
 # === Parameters:
@@ -20,7 +20,7 @@
 # [*groups*] The auxiliary groups the user belongs to (default: '[]').
 #            - Required: no
 #            - Content: Array of Strings
-# 
+#
 # [*password*] The hashed password string, defaults to "locked" (default: '!').
 #              - Required: no
 #              - Content: String
@@ -49,7 +49,7 @@
 # Requires:
 #
 #   Group[$logingroup]
-# 
+#
 # Sample Usage:
 #
 # Users can be created using:
