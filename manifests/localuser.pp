@@ -17,11 +17,12 @@
 #                - Required: yes
 #                - Content: String
 #
-# [*groups*] The auxiliary groups the user belongs to (default: '[]')
+# [*groups*] The auxiliary groups the user belongs to (default: '[]').
 #            - Required: no
 #            - Content: Array of Strings
 # 
-# [*password*] The hashed password string, defaults to "locked" (default: '!').o#              - Required: no
+# [*password*] The hashed password string, defaults to "locked" (default: '!').
+#              - Required: no
 #              - Content: String
 #
 # [*sshkey*] The public key to be copied to ~/.ssh/authorized_keys (no default).
@@ -33,15 +34,15 @@
 #            - Content: 'present' | 'absent'
 #
 # [*managehome*] Should the home directory be created automatically
-#                (default: true)
+#                (default: true).
 #                - Required: no
 #                - Content: Boolean
 #
-# [*homedir*] The home directory for the user (default: '/home/${name}')
+# [*homedir*] The home directory for the user (default: '/home/${name}').
 #             - Required: no
 #             - Content: String
 #
-# [*shell*] The login shell for the user (default: '/bin/bash')
+# [*shell*] The login shell for the user (default: '/bin/bash').
 #           - Required: no
 #           - Content: String
 #
