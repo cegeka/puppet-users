@@ -5,8 +5,8 @@
 # === Parameters:
 #
 # [*name*] The groupname (no default).
-#         - Required: yes
-#         - Content: String
+#          - Required: yes
+#          - Content: String
 #
 # [*gid*] The numeric id for the group (no default).
 #         - Required: yes
