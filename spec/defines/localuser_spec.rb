@@ -97,7 +97,7 @@ describe 'users::localuser' do
           :gid        => 'testgrp',
           :ensure     => 'present',
           :managehome => true,
-          :groups     => '[]',
+          :groups     => [],
           :password   => '!',
           :home       => '/home/foo',
           :shell      => '/bin/bash'
@@ -116,7 +116,7 @@ describe 'users::localuser' do
           :ensure     => 'present',
           :comment    => '',
           :managehome => true,
-          :groups     => '[]',
+          :groups     => [],
           :password   => '!',
           :home       => '/home/foo',
           :shell      => '/bin/bash',
@@ -132,7 +132,7 @@ describe 'users::localuser' do
       end
 
       context 'and homedir => /opt/foo' do
-        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :homedir => '/opt/foo' } }
+        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo' } }
 
         it { should contain_user('foo').with(
           :uid        => '10001',
@@ -141,7 +141,7 @@ describe 'users::localuser' do
           :ensure     => 'present',
           :managehome => true,
           :comment    => '',
-          :groups     => '[]',
+          :groups     => [],
           :password   => '!',
           :home       => '/opt/foo',
           :shell      => '/bin/bash',
