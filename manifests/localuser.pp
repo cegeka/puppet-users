@@ -17,7 +17,7 @@
 #                - Required: yes
 #                - Content: String
 #
-# [*groups*] The auxiliary groups the user belongs to (default: '[]').
+# [*groups*] The auxiliary groups the user belongs to (default: []).
 #            - Required: no
 #            - Content: Array of Strings
 #
@@ -42,7 +42,7 @@
 #                - Required: no
 #                - Content: Boolean
 #
-# [*homedir*] The home directory for the user (default: '/home/${name}').
+# [*home*] The home directory for the user (default: '/home/${name}').
 #             - Required: no
 #             - Content: String
 #
@@ -68,7 +68,7 @@
 #     logingroup => 'testgrp',
 #     password   => '$1$64hp6Ust$DGjSKcEXwmSZ4BTQe9idH0',
 #     sshkey     => 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0mBONiRaPTqTaKfA1l==',
-#     groups     => '[ 'testgrp1', 'testgrp2'],
+#     groups     => [ 'testgrp1', 'testgrp2'],
 #     shell      => '/bin/ksh'
 #   }
 #
@@ -80,7 +80,7 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ($uid, $logingroup, $groups='[]', $password='!', $comment='',  $sshkey='', $ensure='present', $managehome=true, $homedir="/home/${title}", $shell='/bin/bash') {
+define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment='',  $sshkey='', $ensure='present', $managehome=true, $home="/home/${title}", $shell='/bin/bash') {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -115,7 +115,7 @@ define users::localuser ($uid, $logingroup, $groups='[]', $password='!', $commen
     groups     => $groups,
     shell      => $shell,
     comment    => $comment,
-    home       => $homedir,
+    home       => $home,
     password   => $password,
     managehome => $managehome_real,
     require    => Group[$logingroup]
