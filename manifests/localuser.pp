@@ -25,6 +25,10 @@
 #              - Required: no
 #              - Content: String
 #
+# [*comment*] The GECOS field associated with this user (default: '').
+#             - Required: no
+#             - Content: String
+#
 # [*sshkey*] The public key to be copied to ~/.ssh/authorized_keys (no default).
 #            - Required: no
 #            - Content: String
@@ -76,7 +80,7 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ($uid, $logingroup, $groups='[]', $password='!', $sshkey='', $ensure='present', $managehome=true, $homedir="/home/${title}", $shell='/bin/bash') {
+define users::localuser ($uid, $logingroup, $groups='[]', $password='!', $comment='',  $sshkey='', $ensure='present', $managehome=true, $homedir="/home/${title}", $shell='/bin/bash') {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -110,6 +114,7 @@ define users::localuser ($uid, $logingroup, $groups='[]', $password='!', $sshkey
     gid        => $logingroup,
     groups     => $groups,
     shell      => $shell,
+    comment    => $comment,
     home       => $homedir,
     password   => $password,
     managehome => $managehome_real,

@@ -92,15 +92,15 @@ describe 'users::localuser' do
         let (:params) { {:uid => '10001', :logingroup => 'testgrp' } }
 
         it { should contain_user('foo').with(
-          :uid => '10001',
-          :name => 'foo',
-          :gid => 'testgrp',
-          :ensure => 'present',
+          :uid        => '10001',
+          :name       => 'foo',
+          :gid        => 'testgrp',
+          :ensure     => 'present',
           :managehome => true,
-          :groups => '[]',
-          :password => '!',
-          :home => '/home/foo',
-          :shell => '/bin/bash'
+          :groups     => '[]',
+          :password   => '!',
+          :home       => '/home/foo',
+          :shell      => '/bin/bash'
         )}
 
         it { should_not contain_ssh_authorized_key('foo') }
@@ -110,22 +110,23 @@ describe 'users::localuser' do
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :sshkey => 'ssh-rsa AAAAB3NzaC1yc2EAAAABI' } }
 
         it { should contain_user('foo').with(
-          :uid => '10001',
-          :name => 'foo',
-          :gid => 'testgrp',
-          :ensure => 'present',
+          :uid        => '10001',
+          :name       => 'foo',
+          :gid        => 'testgrp',
+          :ensure     => 'present',
+          :comment    => '',
           :managehome => true,
-          :groups => '[]',
-          :password => '!',
-          :home => '/home/foo',
-          :shell => '/bin/bash',
-          :require => 'Group[testgrp]'
+          :groups     => '[]',
+          :password   => '!',
+          :home       => '/home/foo',
+          :shell      => '/bin/bash',
+          :require    => 'Group[testgrp]'
         )}
 
         it { should contain_ssh_authorized_key('foo').with(
-          :ensure => 'present',
-          :key    => 'ssh-rsa AAAAB3NzaC1yc2EAAAABI',
-          :user   => 'foo',
+          :ensure  => 'present',
+          :key     => 'ssh-rsa AAAAB3NzaC1yc2EAAAABI',
+          :user    => 'foo',
           :require => 'User[foo]'
         )}
       end
@@ -134,16 +135,17 @@ describe 'users::localuser' do
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :homedir => '/opt/foo' } }
 
         it { should contain_user('foo').with(
-          :uid => '10001',
-          :name => 'foo',
-          :gid => 'testgrp',
-          :ensure => 'present',
+          :uid        => '10001',
+          :name       => 'foo',
+          :gid        => 'testgrp',
+          :ensure     => 'present',
           :managehome => true,
-          :groups => '[]',
-          :password => '!',
-          :home => '/opt/foo',
-          :shell => '/bin/bash',
-          :require => 'Group[testgrp]'
+          :comment    => '',
+          :groups     => '[]',
+          :password   => '!',
+          :home       => '/opt/foo',
+          :shell      => '/bin/bash',
+          :require    => 'Group[testgrp]'
         )}
       end
     end
