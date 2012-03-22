@@ -185,16 +185,19 @@ namespace "jenkins" do
     Rake::Task[:acceptance].invoke
   end
 
-  desc "Save the current Git commit token"
-  task :archive_git_commit do
+  desc "Archive properties file for the current module."
+  task :archive_properties_file do
     dist_dir = "target/dist"
+
+    module_name = ENV["MODULE_NAME"]
     git_commit = ENV["GIT_COMMIT"]
+    
     if !git_commit.nil? and !git_commit.empty?
-      puts "Saving git commit " + git_commit
-      
+      puts "Saving #{module_name}.properties file" 
       FileUtils.mkdir_p(dist_dir)
-      open("target/dist/git.commit", "w") { |file|
-        file << "git_commit: #{git_commit}"
+      open("target/dist/#{module_name}.properties", "w") { |file|
+	file.puts "module_name: #{module_name}"
+	file.puts "git_commit: #{git_commit}"
       }
     end
   end
