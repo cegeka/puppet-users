@@ -185,17 +185,17 @@ namespace "jenkins" do
     Rake::Task[:acceptance].invoke
   end
 
-  desc "Archive properties file for the current module."
-  task :archive_properties_file do
+  desc "Archive job configuration in YAML format."
+  task :archive_job_configuration do
     dist_dir = "target/dist"
 
-    module_name = ENV["MODULE_NAME"]
+    module_name = ENV["JOB_NAME"]
     git_commit = ENV["GIT_COMMIT"]
     
     if !git_commit.nil? and !git_commit.empty?
-      puts "Saving #{module_name}.properties file" 
+      puts "Saving #{module_name}.yaml file" 
       FileUtils.mkdir_p(dist_dir)
-      open("target/dist/#{module_name}.properties", "w") { |file|
+      open("target/dist/#{module_name}.yaml", "w") { |file|
 	file.puts "module_name: #{module_name}"
 	file.puts "git_commit: #{git_commit}"
       }
