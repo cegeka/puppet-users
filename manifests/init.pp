@@ -11,5 +11,4 @@
 # Sample Usage:
 #
 class users {
-
 }
