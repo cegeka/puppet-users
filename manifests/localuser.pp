@@ -33,6 +33,10 @@
 #            - Required: no
 #            - Content: String
 #
+# ["sshkeytype"] The ssh key encryption type: ssh-dsa/ssh-rsa (default: [])
+#             - required: yes
+#             - content: String
+#
 # [*ensure*] The desired state for the user (default: 'present').
 #            - Required: no
 #            - Content: 'present' | 'absent'
@@ -67,7 +71,8 @@
 #     uid        => '10002',
 #     logingroup => 'testgrp',
 #     password   => '$1$64hp6Ust$DGjSKcEXwmSZ4BTQe9idH0',
-#     sshkey     => 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0mBONiRaPTqTaKfA1l==',
+#     sshkey     => 'AAAAB3NzaC1yc2EAAAABIwAAAQEA0mBONiRaPTqTaKfA1l==',
+#     type       => 'ssh-rsa',
 #     groups     => [ 'testgrp1', 'testgrp2'],
 #     shell      => '/bin/ksh'
 #   }
@@ -80,7 +85,7 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment='',  $sshkey='', $ensure='present', $managehome=true, $home="/home/${title}", $shell='/bin/bash') {
+define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment='',  $sshkey='', $sshkeytype='', $ensure='present', $managehome=true, $home="/home/${title}", $shell='/bin/bash') {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -125,6 +130,7 @@ define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment=
     ssh_authorized_key { $title:
       ensure  => $ensure_real,
       key     => $sshkey,
+      type    => $sshkeytype,
       user    => $title,
       require => User[$title]
     }
