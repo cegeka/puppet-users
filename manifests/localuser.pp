@@ -33,9 +33,9 @@
 #            - Required: no
 #            - Content: String
 #
-# ["sshkeytype"] The ssh key encryption type: ssh-dsa/ssh-rsa (default: [])
-#             - required: yes
-#             - content: String
+# [*sshkeytype*] The ssh key encryption type: ssh-dsa/ssh-rsa (no default)
+#                - required: yes
+#                - content: String
 #
 # [*ensure*] The desired state for the user (default: 'present').
 #            - Required: no
@@ -47,18 +47,18 @@
 #                - Content: Boolean
 #
 # [*home*] The home directory for the user (default: '/home/${name}').
-#             - Required: no
-#             - Content: String
+#          - Required: no
+#          - Content: String
 #
 # [*shell*] The login shell for the user (default: '/bin/bash').
 #           - Required: no
 #           - Content: String
 #
-# Requires:
+# === Requires:
 #
 #   Group[$logingroup]
 #
-# Sample Usage:
+# === Sample Usage:
 #
 # Users can be created using:
 #
