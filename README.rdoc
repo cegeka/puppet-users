@@ -1,6 +1,6 @@
 = cegeka-users module
 
-This is the users module. Use this module to create users and/or groups and
+Use this module to create users and/or groups and
 to distribute the public key you normally use to authenticate to a remote machine. 
 
 == Recommended use
