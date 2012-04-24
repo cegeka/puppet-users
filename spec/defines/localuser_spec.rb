@@ -102,6 +102,10 @@ describe 'users::localuser' do
           :home       => '/home/foo',
           :shell      => '/bin/bash'
         )}
+        
+        it { should contain_file('/home/foo/bin').with(
+          :ensure  => 'directory'
+        )}
 
         it { should_not contain_ssh_authorized_key('foo') }
       end
