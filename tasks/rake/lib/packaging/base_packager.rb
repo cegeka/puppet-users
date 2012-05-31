@@ -4,17 +4,18 @@ require 'fpm/program'
 require 'pp'
 
 $:.unshift(File.join(File.dirname(__FILE__), '..'))
-require 'modulefile_reader'
+require 'version_helper'
 
 class BasePackager
 
   def initialize(package_type)
     self.validate_environment
-    
+
+    version_helper = VersionHelper.new
+
     @basedirectory = ENV['WORKSPACE']
-		@package_version = ModulefileReader.new.version
-		@semver_version = @package_version + "+build." + ENV['BUILD_NUMBER'] + "." + ENV['GIT_COMMIT'][0,10]
-    @release = "1"
+		@semver_version = version_helper.semver_version
+		@release = "1"
     @package_type = package_type 
     
     case package_type
@@ -38,6 +39,7 @@ class BasePackager
   end
  
   def build(module_name)
+		ENV["#{ENV['JOB_NAME']}_semver_version"] = @semver_version
     package_name = "cegeka-puppet-#{module_name}"
     destination_file = "#{package_name}#{@first_delimiter}#{@semver_version}-#{@release}#{@second_delimiter}#{@architecture}.#{@package_type}"
     destination_folder = "#{@basedirectory}/#{module_name}/#{RESULTS}/dist"
