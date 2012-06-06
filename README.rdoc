@@ -1,7 +1,8 @@
 = cegeka-users module
 
-This is the users module. Use this module to create users and/or groups and
-to distribute the public key you normally use to authenticate to a remote machine. 
+This is the users module. Use this module to create users and/or groups, create a
+bin directory in the homedir and to distribute the public key you normally use to
+authenticate to a remote machine.
 
 == Recommended use
 
@@ -29,8 +30,8 @@ You can now easily realize the virtual users as you see fit.
   class mysite::myserver {
     include mysite::users
 
-    realize Users::Localgroup['admins']
-    realize Users::Localuser['foo']
+    Users::Localgroup <| title == 'admins' |>
+    Users::Localuser <| title == 'foo' |>
   }
 
 This enables you to consolidate your users and still be flexible.
