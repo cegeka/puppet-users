@@ -23,7 +23,7 @@ task :doc => [:doc_prep] do
     
   sh %{puppet doc --mode rdoc --manifestdir #{manifest_dir} --modulepath ../ --outputdir #{output_dir}}
 
-  work_dir = File.dirname(__FILE__)
+  work_dir = "#{MODULE_ROOT_DIR}"
   parent_dir = File.dirname(work_dir)
 
   if File.directory? "#{output_dir}/files/#{work_dir}"
