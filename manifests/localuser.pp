@@ -127,7 +127,9 @@ define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment=
   }
 
   file { "${home}/bin":
-    ensure     => 'directory'
+    ensure => 'directory'
+    owner  => $uid,
+    group  => $logingroup,
   }
 
   if $sshkey != '' {
