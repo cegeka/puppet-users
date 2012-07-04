@@ -104,7 +104,9 @@ describe 'users::localuser' do
         )}
         
         it { should contain_file('/home/foo/bin').with(
-          :ensure  => 'directory'
+          :ensure  => 'directory',
+					:owner   => '10001',
+          :group   => 'testgrp'
         )}
 
         it { should_not contain_ssh_authorized_key('foo') }
