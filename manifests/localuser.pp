@@ -1,7 +1,7 @@
 # == Definition: users::localuser
 #
-# Adds the specified user on the local system, adds a dir bin to the homedir and adds a public key to the
-# ~/.ssh/authorized_keys file, if provided.
+# Adds the specified user on the local system, adds a dir bin to the homedir and
+# adds a public key to the ~/.ssh/authorized_keys file, if provided.
 #
 # === Parameters:
 #
@@ -85,7 +85,10 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment='',  $sshkey='', $sshkeytype='', $ensure='present', $managehome=true, $home="/home/${title}", $shell='/bin/bash') {
+define users::localuser ( $uid, $logingroup, $groups=[], $password='!',
+                          $comment='',  $sshkey='', $sshkeytype='',
+                          $ensure='present', $managehome=true,
+                          $home="/home/${title}", $shell='/bin/bash') {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -96,14 +99,16 @@ define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment=
   }
 
   if $logingroup !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
-    fail("Users::Localuser[${title}]: parameter logingroup must be alphanumeric")
+    fail("Users::Localuser[${title}]:
+    parameter logingroup must be alphanumeric")
   }
 
   if $ensure in [ present, absent ] {
     $ensure_real = $ensure
   }
   else {
-    fail("Users::Localgroup[${title}]: parameter ensure must be present or absent")
+    fail("Users::Localgroup[${title}]:
+    parameter ensure must be present or absent")
   }
 
   case $managehome {
@@ -127,9 +132,10 @@ define users::localuser ($uid, $logingroup, $groups=[], $password='!', $comment=
   }
 
   file { "${home}/bin":
-    ensure => directory,
-    owner  => $uid,
-    group  => $logingroup,
+    ensure  => directory,
+    owner   => $uid,
+    group   => $logingroup,
+    require => User[$title],
   }
 
   if $sshkey != '' {
