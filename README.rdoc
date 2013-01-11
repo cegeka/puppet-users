@@ -3,7 +3,7 @@
 {<img src='https://codex.cegeka.be/jenkins/job/puppet-users/badge/icon' />}[https://codex.cegeka.be/jenkins/job/puppet-users/]
 
 Use this module to create users and/or groups and
-to distribute the public key you normally use to authenticate to a remote machine. 
+to distribute the public key you normally use to authenticate to a remote machine.
 
 == Recommended use
 
@@ -31,8 +31,8 @@ You can now easily realize the virtual users as you see fit.
   class mysite::myserver {
     include mysite::users
 
-    realize Users::Localgroup['admins']
-    realize Users::Localuser['foo']
+    Users::Localgroup <| title == 'admins' |>
+    Users::Localuser <| title == 'foo' |>
   }
 
 This enables you to consolidate your users and still be flexible.
