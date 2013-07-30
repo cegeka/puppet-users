@@ -46,7 +46,8 @@ describe 'users::localuser' do
       let (:params) { {:ensure => 'absent' } }
 
       it { should contain_user('foo').with(
-        :ensure     => 'absent'
+        :ensure     => 'absent',
+        :managehome => true
       )}
 
       it { should contain_file('/home/foo/bin').with(
