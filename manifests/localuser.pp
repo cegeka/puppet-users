@@ -102,10 +102,18 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
     parameter ensure must be present or absent")
   }
 
+  case $managehome {
+    true, false: { $managehome_real = $managehome }
+    default: {
+      fail("Users::Localuser[${title}]: parameter managehome must be a boolean")
+    }
+  }
+
   case $ensure_real {
     'absent': {
       user { $title:
         ensure => $ensure_real,
+        managehome => $managehome
       }
 
       file { "${home}/bin":
@@ -121,13 +129,6 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       if $logingroup !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
         fail("Users::Localuser[${title}]:
           parameter logingroup must be alphanumeric")
-      }
-
-      case $managehome {
-        true, false: { $managehome_real = $managehome }
-        default: {
-          fail("Users::Localuser[${title}]: parameter managehome must be a boolean")
-        }
       }
 
       user { $title:
