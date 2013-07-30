@@ -18,7 +18,7 @@ describe 'users::localuser' do
     it {
       expect { subject }.to raise_error(
         Puppet::Error, /namevar must be alphanumeric/
-    )}  
+    )}
   end
 
   context 'with an alphanumeric title' do
@@ -29,7 +29,7 @@ describe 'users::localuser' do
 
       it {
         expect { subject }.to raise_error(
-          Puppet::Error, /Must pass uid/
+          Puppet::Error, /parameter uid must be numeric/
       )}
     end
 
@@ -38,7 +38,20 @@ describe 'users::localuser' do
 
       it {
         expect { subject }.to raise_error(
-          Puppet::Error, /Must pass logingroup/
+          Puppet::Error, /parameter logingroup must be alphanumeric/
+      )}
+    end
+
+    context 'and ensure => absent' do
+      let (:params) { {:ensure => 'absent' } }
+
+      it { should contain_user('foo').with(
+        :ensure     => 'absent'
+      )}
+
+      it { should contain_file('/home/foo/bin').with(
+        :ensure => 'absent',
+        :before => 'User[foo]'
       )}
     end
 
@@ -50,7 +63,7 @@ describe 'users::localuser' do
           Puppet::Error, /parameter uid must be numeric/
       )}
     end
-    
+
     context 'and logingroup => 10001' do
       let (:params) { {:uid => '10001', :logingroup => '10001' } }
 
@@ -102,10 +115,10 @@ describe 'users::localuser' do
           :home       => '/home/foo',
           :shell      => '/bin/bash'
         )}
-        
+
         it { should contain_file('/home/foo/bin').with(
           :ensure  => 'directory',
-					:owner   => '10001',
+	  :owner   => '10001',
           :group   => 'testgrp'
         )}
 
@@ -156,4 +169,5 @@ describe 'users::localuser' do
       end
     end
   end
+
 end
