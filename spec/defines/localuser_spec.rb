@@ -151,7 +151,7 @@ describe 'users::localuser' do
         )}
       end
 
-      context 'and homedir => /opt/foo' do
+      context 'and home => /opt/foo' do
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo' } }
 
         it { should contain_user('foo').with(
@@ -168,7 +168,24 @@ describe 'users::localuser' do
           :require    => 'Group[testgrp]'
         )}
       end
+
+      context 'and env_class => foo::bar' do
+        let (:pre_condition) { 'class foo::bar( $home = undef ) { }' }
+        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :env_class => 'foo::bar' } }
+
+        it { should contain_class('foo::bar').with(
+          :home => '/home/foo'
+        )}
+      end
+
+      context 'and home => /opt/foo and env_class => foo::bar' do
+        let (:pre_condition) { 'class foo::bar( $home = undef ) { }' }
+        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo', :env_class => 'foo::bar' } }
+
+        it { should contain_class('foo::bar').with(
+          :home => '/opt/foo'
+        )}
+      end
     end
   end
-
 end
