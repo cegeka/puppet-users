@@ -55,7 +55,9 @@
 #           - Content: String
 #
 # [*env_class*] The name of an optional Puppet Class that contains code for
-#               the environment setup of the user (no default).
+#               the environment setup of the user. This class has 3 parameters:
+#               owner, group and home. These will be used when creating
+#               files (no default).
 #               - Required: no
 #               - Content: String
 #
