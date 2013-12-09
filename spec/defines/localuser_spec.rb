@@ -170,20 +170,24 @@ describe 'users::localuser' do
       end
 
       context 'and env_class => foo::bar' do
-        let (:pre_condition) { 'class foo::bar( $home = undef ) { }' }
+        let (:pre_condition) { 'class foo::bar( $owner, $group, $home = undef ) { }' }
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :env_class => 'foo::bar' } }
 
         it { should contain_class('foo::bar').with(
-          :home => '/home/foo'
+          :home  => '/home/foo',
+          :owner => 'foo',
+          :group => 'testgrp'
         )}
       end
 
       context 'and home => /opt/foo and env_class => foo::bar' do
-        let (:pre_condition) { 'class foo::bar( $home = undef ) { }' }
+        let (:pre_condition) { 'class foo::bar( $owner, $group, $home = undef ) { }' }
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo', :env_class => 'foo::bar' } }
 
         it { should contain_class('foo::bar').with(
-          :home => '/opt/foo'
+          :home => '/opt/foo',
+          :owner => 'foo',
+          :group => 'testgrp'
         )}
       end
     end

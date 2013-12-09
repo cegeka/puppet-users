@@ -170,7 +170,9 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
 
       if $env_class {
         class { $env_class:
-          home => $home
+          owner => $title,
+          group => $logingroup,
+          home  => $home
         }
 
         User[$title] -> Class[$env_class]
