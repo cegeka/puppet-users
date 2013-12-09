@@ -172,6 +172,8 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         class { $env_class:
           home => $home
         }
+
+        User[$title] -> Class[$env_class]
       }
     }
   }
