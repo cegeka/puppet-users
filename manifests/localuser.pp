@@ -54,6 +54,11 @@
 #           - Required: no
 #           - Content: String
 #
+# [*env_class*] The name of an optional Puppet Class that contains code for
+#               the environment setup of the user (no default).
+#               - Required: no
+#               - Content: String
+#
 # === Requires:
 #
 #   Group[$logingroup]
@@ -74,7 +79,8 @@
 #     sshkey     => 'AAAAB3NzaC1yc2EAAAABIwAAAQEA0mBONiRaPTqTaKfA1l==',
 #     type       => 'ssh-rsa',
 #     groups     => [ 'testgrp1', 'testgrp2'],
-#     shell      => '/bin/ksh'
+#     shell      => '/bin/ksh',
+#     env_class  => 'users::env::bar'
 #   }
 #
 # Existing users can be removed using:
@@ -88,7 +94,8 @@
 define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='!',
                           $comment='',  $sshkey='', $sshkeytype='',
                           $ensure='present', $managehome=true,
-                          $home="/home/${title}", $shell='/bin/bash') {
+                          $home="/home/${title}", $shell='/bin/bash',
+                          $env_class=undef) {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -158,6 +165,12 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
           type    => $sshkeytype,
           user    => $title,
           require => User[$title]
+        }
+      }
+
+      if $env_class {
+        class { $env_class:
+          home => $home
         }
       }
     }
