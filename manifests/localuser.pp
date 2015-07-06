@@ -138,6 +138,21 @@ define users::localuser ( $uid, $logingroup, $groups=[], $password='!',
     require => User[$title],
   }
 
+  file_line { 'source.profile.d':
+    path => "${home}/.bash_profile",
+    line => '[ -d .profile.d ] && source .profile.d/*.sh'
+  }
+
+  file_line { 'source.bashrc':
+    path => "${home}/.bashrc",
+    line => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh'
+  }
+
+  file { "${home}/.profile.d":
+    ensure  => directory,
+    mode    => '0755'
+  }
+
   if $sshkey != '' {
     ssh_authorized_key { $title:
       ensure  => $ensure_real,
