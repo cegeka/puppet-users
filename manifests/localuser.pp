@@ -121,8 +121,8 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
   case $ensure_real {
     'absent': {
       user { $title:
-        ensure => $ensure_real,
-        managehome => $managehome
+        ensure      => $ensure_real,
+        managehome  => $managehome
       }
 
       file { "${home}/bin":
@@ -176,9 +176,32 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
           group => $logingroup,
           home  => $home
         }
-
         User[$title] -> Class[$env_class]
       }
+
+      file_line { 'source.profile.d':
+        path => "${home}/.bash_profile",
+        line => '[ -d .profile.d ] && source .profile.d/*.sh'
+      }
+
+      file_line { 'source.bashrc':
+        path => "${home}/.bashrc",
+        line => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh'
+      }
+
+      file { "${home}/.profile.d":
+        ensure  => directory,
+        mode    => '0755'
+      }
+
+      if $sshkey != '' {
+        ssh_authorized_key { $title:
+          ensure  => $ensure_real,
+          key     => $sshkey,
+          type    => $sshkeytype,
+          user    => $title,
+          require => User[$title]
+        }
+      }
     }
-  }
 }
