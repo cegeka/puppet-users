@@ -18,7 +18,7 @@ describe 'users::localuser' do
     it {
       expect { subject }.to raise_error(
         Puppet::Error, /namevar must be alphanumeric/
-    )}  
+    )}
   end
 
   context 'with an alphanumeric title' do
@@ -29,7 +29,7 @@ describe 'users::localuser' do
 
       it {
         expect { subject }.to raise_error(
-          Puppet::Error, /Must pass uid/
+          Puppet::Error, /parameter uid must be numeric/
       )}
     end
 
@@ -38,7 +38,21 @@ describe 'users::localuser' do
 
       it {
         expect { subject }.to raise_error(
-          Puppet::Error, /Must pass logingroup/
+          Puppet::Error, /parameter logingroup must be alphanumeric/
+      )}
+    end
+
+    context 'and ensure => absent' do
+      let (:params) { {:ensure => 'absent' } }
+
+      it { should contain_user('foo').with(
+        :ensure     => 'absent',
+        :managehome => true
+      )}
+
+      it { should contain_file('/home/foo/bin').with(
+        :ensure => 'absent',
+        :before => 'User[foo]'
       )}
     end
 
@@ -50,7 +64,7 @@ describe 'users::localuser' do
           Puppet::Error, /parameter uid must be numeric/
       )}
     end
-    
+
     context 'and logingroup => 10001' do
       let (:params) { {:uid => '10001', :logingroup => '10001' } }
 
@@ -102,10 +116,10 @@ describe 'users::localuser' do
           :home       => '/home/foo',
           :shell      => '/bin/bash'
         )}
-        
+
         it { should contain_file('/home/foo/bin').with(
           :ensure  => 'directory',
-					:owner   => '10001',
+	  :owner   => '10001',
           :group   => 'testgrp'
         )}
 
@@ -137,7 +151,7 @@ describe 'users::localuser' do
         )}
       end
 
-      context 'and homedir => /opt/foo' do
+      context 'and home => /opt/foo' do
         let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo' } }
 
         it { should contain_user('foo').with(
@@ -152,6 +166,28 @@ describe 'users::localuser' do
           :home       => '/opt/foo',
           :shell      => '/bin/bash',
           :require    => 'Group[testgrp]'
+        )}
+      end
+
+      context 'and env_class => foo::bar' do
+        let (:pre_condition) { 'class foo::bar( $owner, $group, $home = undef ) { }' }
+        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :env_class => 'foo::bar' } }
+
+        it { should contain_class('foo::bar').with(
+          :home  => '/home/foo',
+          :owner => 'foo',
+          :group => 'testgrp'
+        )}
+      end
+
+      context 'and home => /opt/foo and env_class => foo::bar' do
+        let (:pre_condition) { 'class foo::bar( $owner, $group, $home = undef ) { }' }
+        let (:params) { {:uid => '10001', :logingroup => 'testgrp', :home => '/opt/foo', :env_class => 'foo::bar' } }
+
+        it { should contain_class('foo::bar').with(
+          :home => '/opt/foo',
+          :owner => 'foo',
+          :group => 'testgrp'
         )}
       end
     end
