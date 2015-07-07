@@ -179,12 +179,12 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         User[$title] -> Class[$env_class]
       }
 
-      file_line { 'source.profile.d':
+      file_line { "${home}/.bash_profile":
         path => "${home}/.bash_profile",
         line => '[ -d .profile.d ] && source .profile.d/*.sh'
       }
 
-      file_line { 'source.bashrc':
+      file_line { "${home}/.bashrc":
         path => "${home}/.bashrc",
         line => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh'
       }
