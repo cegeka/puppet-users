@@ -1,3 +1,5 @@
 fixtures:
+  repositories:
+      stdlib: https://github.com/cegeka/puppet-stdlib.git
   symlinks:
     "users": "#{source_dir}"
