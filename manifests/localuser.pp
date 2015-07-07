@@ -194,14 +194,6 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         mode    => '0755'
       }
 
-      if $sshkey != '' {
-        ssh_authorized_key { $title:
-          ensure  => $ensure_real,
-          key     => $sshkey,
-          type    => $sshkeytype,
-          user    => $title,
-          require => User[$title]
-        }
-      }
     }
+  }
 }
