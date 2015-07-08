@@ -180,18 +180,21 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       }
 
       file_line { "${home}/.bash_profile":
-        path => "${home}/.bash_profile",
-        line => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh'
+        path    => "${home}/.bash_profile",
+        line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
+        require => User[$title]
       }
 
       file_line { "${home}/.bashrc":
-        path => "${home}/.bashrc",
-        line => '[ -d .profile.d ] && [[ -z $PS1 ]] && [[ -f .profile.d/*.sh ]] && source .profile.d/*.sh'
+        path    => "${home}/.bashrc",
+        line    => '[ -d .profile.d ] && [[ -z $PS1 ]] && [[ -f .profile.d/*.sh ]] && source .profile.d/*.sh',
+        require => User[$title]
       }
 
       file { "${home}/.profile.d":
         ensure  => directory,
-        mode    => '0755'
+        mode    => '0755',
+        require => User[$title]
       }
 
     }
