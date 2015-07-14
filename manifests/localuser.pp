@@ -188,6 +188,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         ensure  => absent,
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && source .profile.d/*.sh'
+        require => User[$title]
       }
 
       file_line { "${home}/.bashrc":
@@ -199,6 +200,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         ensure  => absent,
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh'
+        require => User[$title]
       }
 
       file { "${home}/.profile.d":
