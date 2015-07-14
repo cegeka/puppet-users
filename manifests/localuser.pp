@@ -187,7 +187,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       file_line { "${home}/.bash_profile-remove":
         ensure  => absent,
         path    => "${home}/.bash_profile",
-        line    => '[ -d .profile.d ] && source .profile.d/*.sh'
+        line    => '[ -d .profile.d ] && source .profile.d/*.sh',
         require => User[$title]
       }
 
@@ -199,7 +199,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       file_line { "${home}/.bashrc-remove":
         ensure  => absent,
         path    => "${home}/.bashrc",
-        line    => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh'
+        line    => '[ -d .profile.d ] && [[ -z $PS1 ]] && source .profile.d/*.sh',
         require => User[$title]
       }
 
