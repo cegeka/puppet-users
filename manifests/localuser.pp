@@ -179,10 +179,19 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         User[$title] -> Class[$env_class]
       }
 
+      file {'.bash_profile':
+        path => "${home}/.bash_profile",
+        ensure => present,
+      }
+      file {'.bashrc':
+        path => "${home}/.bashrc",
+        ensure => present,
+      }
+
       file_line { "${home}/.bash_profile":
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => User[$title]
+        require => [User[$title],File['.bash_profile']]
       }
       file_line { "${home}/.bash_profile-remove":
         ensure  => absent,
@@ -194,7 +203,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       file_line { "${home}/.bashrc":
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => User[$title]
+        require => [User[$title],File['.bashrc']]
       }
       file_line { "${home}/.bashrc-remove":
         ensure  => absent,
