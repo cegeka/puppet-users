@@ -93,9 +93,9 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='!',
+define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $groups=[], $password='!',
                           $comment='',  $sshkey='', $sshkeytype='',
-                          $ensure='present', $managehome=true,
+                          $managehome=true,
                           $home="/home/${title}", $shell='/bin/bash',
                           $env_class=undef) {
 
@@ -179,19 +179,21 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
         User[$title] -> Class[$env_class]
       }
 
-      file {'.bash_profile':
-        path => "${home}/.bash_profile",
-        ensure => present,
+      file { "${home}/.bash_profile":
+        ensure  => present,
+        path    => "${home}/.bash_profile",
+        require => User[$title]
       }
-      file {'.bashrc':
-        path => "${home}/.bashrc",
-        ensure => present,
+      file { "${home}/.bashrc":
+        ensure  => present,
+        path    => "${home}/.bashrc",
+        require => User[$title]
       }
 
       file_line { "${home}/.bash_profile":
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => [User[$title],File['.bash_profile']]
+        require => [User[$title],File["${home}/.bash_profile"]]
       }
       file_line { "${home}/.bash_profile-remove":
         ensure  => absent,
@@ -203,7 +205,7 @@ define users::localuser ( $uid=undef, $logingroup=undef, $groups=[], $password='
       file_line { "${home}/.bashrc":
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => [User[$title],File['.bashrc']]
+        require => [User[$title],File["${home}/.bashrc"]]
       }
       file_line { "${home}/.bashrc-remove":
         ensure  => absent,
