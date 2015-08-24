@@ -181,11 +181,15 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
 
       file { "${home}/.bash_profile":
         ensure  => present,
+        owner   => $uid,
+        group   => $logingroup,
         path    => "${home}/.bash_profile",
         require => User[$title]
       }
       file { "${home}/.bashrc":
         ensure  => present,
+        owner   => $uid,
+        group   => $logingroup,
         path    => "${home}/.bashrc",
         require => User[$title]
       }
@@ -216,7 +220,9 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
 
       file { "${home}/.profile.d":
         ensure  => directory,
-        mode    => '0755',
+        owner   => $uid,
+        group   => $logingroup,
+        mode    => '0750',
         require => User[$title]
       }
 
