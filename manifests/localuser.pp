@@ -199,23 +199,11 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
         line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
         require => [User[$title],File["${home}/.bash_profile"]]
       }
-      file_line { "${home}/.bash_profile-remove":
-        ensure  => absent,
-        path    => "${home}/.bash_profile",
-        line    => '[ -d .profile.d ] && source .profile.d/*.sh',
-        require => User[$title]
-      }
 
       file_line { "${home}/.bashrc":
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
         require => [User[$title],File["${home}/.bashrc"]]
-      }
-      file_line { "${home}/.bashrc-remove":
-        ensure  => absent,
-        path    => "${home}/.bashrc",
-        line    => '[ -d .profile.d ] && [[ -z $PS1 ]] && [[ -f .profile.d/*.sh ]] && source .profile.d/*.sh',
-        require => User[$title]
       }
 
       file { "${home}/.profile.d":
