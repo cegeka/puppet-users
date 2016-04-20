@@ -5,9 +5,12 @@ describe 'users::localuser' do
   describe 'running puppet code' do
     it 'should work with no errors' do
       pp = <<-EOS
+        users::localgroup { 'foo':
+          gid => '10001'
+        }
         users::localuser { 'foo':
           uid => '10001',
-          logingroup => 'wheel'
+          logingroup => 'foo'
         }
       EOS
 
