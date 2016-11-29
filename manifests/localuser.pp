@@ -196,13 +196,13 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
 
       file_line { "${home}/.bash_profile":
         path    => "${home}/.bash_profile",
-        line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
+        line    => '[ -d .profile.d ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file; done',
         require => [User[$title],File["${home}/.bash_profile"]]
       }
 
       file_line { "${home}/.bashrc":
         path    => "${home}/.bashrc",
-        line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
+        line    => '[ -d .profile.d ] && [ -z "$PS1" ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file; done',
         require => [User[$title],File["${home}/.bashrc"]]
       }
 
