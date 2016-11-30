@@ -194,12 +194,25 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
         require => User[$title]
       }
 
+      # remove existing lines
+      file_line { "remove old ${home}/.bash_profile":
+        path    => "${home}/.bash_profile",
+        line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
+        require => [User[$title],File["${home}/.bash_profile"]],
+        ensure  => absent
+      }
+      file_line { "remove old ${home}/.bashrc":
+        path    => "${home}/.bashrc",
+        line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
+        require => [User[$title],File["${home}/.bashrc"]],
+        ensure  => absent
+      }
+      # add new lines
       file_line { "${home}/.bash_profile":
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
         require => [User[$title],File["${home}/.bash_profile"]]
       }
-
       file_line { "${home}/.bashrc":
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
