@@ -1,6 +1,6 @@
 = puppet-users module
 
-{<img src='https://codex.cegeka.be/jenkins/job/puppet-users/badge/icon' />}[https://codex.cegeka.be/jenkins/job/puppet-users/]
+{<img src='https://jenkins-iac.cegeka.be/job/puppet-users/badge/icon' />}[https://jenkins-iac.cegeka.be/job/puppet-users/]
 
 Use this module to create users and/or groups and
 to distribute the public key you normally use to authenticate to a remote machine.
