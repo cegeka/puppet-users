@@ -37,12 +37,17 @@ define users::localgroup ($gid, $ensure='present') {
     fail("Users::Localgroup[${title}]:
       namevar must be alphanumeric")
   }
-
-  if $gid !~ /^[0-9]+$/ {
-    fail("Users::Localgroup[${title}]:
-      parameter gid must be numeric")
+  if $gid.is_bool{
+    if bool2str($gid) !~ /^[0-9]+$/ {
+      fail("Users::Localgroup[${title}]:
+        parameter gid must be numeric")
+    }
+  } elsif $gid.is_string {
+    if $gid !~ /^[0-9]+$/ {
+      fail("Users::Localgroup[${title}]:
+        parameter gid must be numeric")
+    }
   }
-
   if $ensure in [ present, absent ] {
     $ensure_real = $ensure
   }
