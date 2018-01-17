@@ -131,7 +131,7 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
       }
     }
     default: {
-      if $uid !~ /^[0-9]+$/ {
+      if ! is_numeric($uid) {
         fail("Users::Localuser[${title}]: parameter uid must be numeric")
       }
 
