@@ -97,7 +97,7 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
                           $comment='',  $sshkey='', $sshkeytype='',
                           $managehome=true,
                           $home="/home/${title}", $shell='/bin/bash',
-                          $env_class=undef) {
+                          $env_class=undef, $secret_id=undef) {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
     fail("Users::Localuser[${title}]: namevar must be alphanumeric")
@@ -139,18 +139,33 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
         fail("Users::Localuser[${title}]:
           parameter logingroup must be alphanumeric")
       }
-
-      user { $title:
-        ensure     => $ensure_real,
-        uid        => $uid,
-        gid        => $logingroup,
-        groups     => $groups,
-        shell      => $shell,
-        comment    => $comment,
-        home       => $home,
-        password   => $password,
-        managehome => $managehome_real,
-        require    => Group[$logingroup]
+      if $secret_id == undef {
+        user { $title:
+          ensure     => $ensure_real,
+          uid        => $uid,
+          gid        => $logingroup,
+          groups     => $groups,
+          shell      => $shell,
+          comment    => $comment,
+          home       => $home,
+          password   => $password,
+          managehome => $managehome_real,
+          require    => Group[$logingroup]
+        }
+      }
+      else {
+        user { $title:
+          ensure     => $ensure_real,
+          uid        => $uid,
+          gid        => $logingroup,
+          groups     => $groups,
+          shell      => $shell,
+          comment    => $comment,
+          home       => $home,
+          password   => pw_hash(getsecret($secret_id, 'Password'),'SHA-512',getsecret($secret_id, 'SALT')),
+          managehome => $managehome_real,
+          require    => Group[$logingroup]
+        }
       }
 
       file { "${home}/bin":
