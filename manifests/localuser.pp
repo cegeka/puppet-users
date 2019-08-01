@@ -93,10 +93,10 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $groups=[], $password='!',
-                          $comment='',  $sshkey='', $sshkeytype='',
-                          $managehome=true,
-                          $home="/home/${title}", $shell='/bin/bash',
+define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $groups=[], $password='!',
+                          $comment='', $sshkey='', $sshkeytype='',
+                          $managehome=true, $home="/home/${title}", 
+                          $managebashrc=true, $shell='/bin/bash',
                           $env_class=undef, $secret_id=undef) {
 
   if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
@@ -228,10 +228,12 @@ define users::localuser ( $ensure='present',$uid=undef, $logingroup=undef, $grou
         line    => '[ -d .profile.d ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
         require => [User[$title],File["${home}/.bash_profile"]]
       }
-      file_line { "${home}/.bashrc":
-        path    => "${home}/.bashrc",
-        line    => '[ -d .profile.d ] && [ -z "$PS1" ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
-        require => [User[$title],File["${home}/.bashrc"]]
+      if $managebashrc {
+        file_line { "${home}/.bashrc":
+          path    => "${home}/.bashrc",
+          line    => '[ -d .profile.d ] && [ -z "$PS1" ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
+          require => [User[$title],File["${home}/.bashrc"]]
+        }
       }
 
       file { "${home}/.profile.d":
