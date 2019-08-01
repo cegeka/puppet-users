@@ -95,7 +95,7 @@
 #
 define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $groups=[], $password='!',
                           $comment='', $sshkey='', $sshkeytype='',
-                          $managehome=true, $home="/home/${title}", 
+                          $managehome=true, $home="/home/${title}",
                           $managebashrc=true, $shell='/bin/bash',
                           $env_class=undef, $secret_id=undef) {
 
