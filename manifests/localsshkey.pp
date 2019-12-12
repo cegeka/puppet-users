@@ -26,7 +26,7 @@
 
 define users::localsshkey(
   $user,
-  $type,
+  $type = undef,
   $ensure = undef,
   $key_secret_id = undef,
   $key = undef,
@@ -35,15 +35,29 @@ define users::localsshkey(
 ){
 
   if $key == undef and $key_secret_id != undef {
-    $realkey = regsubst(getsecret($key_secret_id, 'Public Key'),'\n$','')
+    $sshkey = regsubst(getsecret($key_secret_id, 'Public Key'),'\n$','')
+  } elsif $key != undef {
+    $sshkey = $key
   }
-  elsif $key != undef {
-    $realkey = $key
+
+  # this will check if the ssh key contains the ssh-(keytype) prefix and only take the relevant part
+  $matches = $sshkey.match(/^([a-zA-Z0-9-]*) ([^ ]*) ?(.*)?/)
+  if $matches {
+    $realkey = $matches[2]
+
+    if $type == undef {
+      $realtype = $matches[1]
+    } else {
+      $realtype = $type
+    }
+  } else {
+    $realkey = $sshkey
+    $realtype = $type
   }
 
   ssh_authorized_key { $title:
     user     =>  $user,
-    type     =>  $type,
+    type     =>  $realtype,
     ensure   =>  $ensure,
     key      =>  $realkey,
     options  =>  $options,
