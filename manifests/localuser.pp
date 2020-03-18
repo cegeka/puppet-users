@@ -243,6 +243,13 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
         mode    => '0750',
         require => User[$title]
       }
+      file { "${home}/.ssh":
+        ensure  => directory,
+        owner   => $uid,
+        group   => $logingroup,
+        mode    => '0700',
+        require => User[$title]
+      }
 
     }
   }
