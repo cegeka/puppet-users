@@ -93,55 +93,41 @@
 #     logingroup => 'testgrp'
 #   }
 #
-define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $groups=[], $password='!',
-                          $comment='', $sshkey='', $sshkeytype='',
-                          $managehome=true, $home="/home/${title}",
-                          $managebashrc=true, $shell='/bin/bash',
-                          $env_class=undef, $secret_id=undef) {
+define users::localuser (
+  Enum['present', 'absent'] $ensure = 'present',
+  Pattern[/^([a-z][a-z0-9_-]*)/] $user = $title,
+  Variant[Pattern[/^(\d*)/],Integer,Undef] $uid = undef,
+  Pattern[/^([a-z][a-z0-9_-]*)/] $logingroup = undef,
+  Array[String] $groups = [],
+  String $password = '!',
+  String $comment = '',
+  Optional $sshkey = undef,
+  Optional $sshkeytype = undef,
+  Boolean $managehome = true,
+  String $home = "/home/${user}",
+  Boolean $managebashrc = true,
+  String $shell = '/bin/bash',
+  Optional $env_class = undef,
+  Optional $secret_id = undef) {
 
-  if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
-    fail("Users::Localuser[${title}]: namevar must be alphanumeric")
-  }
-
-  if $ensure in [ present, absent ] {
-    $ensure_real = $ensure
-  }
-  else {
-    fail("Users::Localgroup[${title}]:
-    parameter ensure must be present or absent")
-  }
-
-  case $managehome {
-    true, false: { $managehome_real = $managehome }
-    default: {
-      fail("Users::Localuser[${title}]: parameter managehome must be a boolean")
-    }
-  }
-
-  case $ensure_real {
+  case $ensure {
     'absent': {
-      user { $title:
-        ensure      => $ensure_real,
+      user { $user:
+        ensure      => $ensure,
         managehome  => $managehome
       }
 
       file { "${home}/bin":
-        ensure => $ensure_real,
-        before => User[$title]
+        ensure  => $ensure,
+        recurse => true,
+        force   => true,
+        before  => User[$user]
       }
     }
-    default: {
-      if ! is_numeric($uid) {
-        fail("Users::Localuser[${title}]: parameter uid must be numeric")
-      }
-
-      if $logingroup !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
-        fail("Users::Localuser[${title}]:
-          parameter logingroup must be alphanumeric")
-      }
+    'present': {
       if $secret_id == undef {
-        user { $title:
-          ensure     => $ensure_real,
+        user { $user:
+          ensure     => $ensure,
           uid        => $uid,
           gid        => $logingroup,
           groups     => $groups,
@@ -149,13 +135,13 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
           comment    => $comment,
           home       => $home,
           password   => $password,
-          managehome => $managehome_real,
+          managehome => $managehome,
           require    => Group[$logingroup]
         }
       }
       else {
-        user { $title:
-          ensure     => $ensure_real,
+        user { $user:
+          ensure     => $ensure,
           uid        => $uid,
           gid        => $logingroup,
           groups     => $groups,
@@ -163,7 +149,7 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
           comment    => $comment,
           home       => $home,
           password   => pw_hash(getsecret($secret_id, 'Password'),'SHA-512',getsecret($secret_id, 'SALT')),
-          managehome => $managehome_real,
+          managehome => $managehome,
           require    => Group[$logingroup]
         }
       }
@@ -172,26 +158,26 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
         ensure  => directory,
         owner   => $uid,
         group   => $logingroup,
-        require => User[$title],
+        require => User[$user],
       }
 
-      if $sshkey != '' {
-        ssh_authorized_key { $title:
-          ensure  => $ensure_real,
+      if $sshkey {
+        ssh_authorized_key { $user:
+          ensure  => $ensure,
           key     => $sshkey,
           type    => $sshkeytype,
-          user    => $title,
-          require => User[$title]
+          user    => $user,
+          require => User[$user]
         }
       }
 
       if $env_class {
         class { $env_class:
-          owner => $title,
+          owner => $user,
           group => $logingroup,
           home  => $home
         }
-        User[$title] -> Class[$env_class]
+        User[$user] -> Class[$env_class]
       }
 
       file { "${home}/.bash_profile":
@@ -199,40 +185,40 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
         owner   => $uid,
         group   => $logingroup,
         path    => "${home}/.bash_profile",
-        require => User[$title]
+        require => User[$user]
       }
       file { "${home}/.bashrc":
         ensure  => present,
         owner   => $uid,
         group   => $logingroup,
         path    => "${home}/.bashrc",
-        require => User[$title]
+        require => User[$user]
       }
 
       # remove existing lines
       file_line { "remove old ${home}/.bash_profile":
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => [User[$title],File["${home}/.bash_profile"]],
+        require => [User[$user],File["${home}/.bash_profile"]],
         ensure  => absent
       }
       file_line { "remove old ${home}/.bashrc":
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
-        require => [User[$title],File["${home}/.bashrc"]],
+        require => [User[$user],File["${home}/.bashrc"]],
         ensure  => absent
       }
       # add new lines
       file_line { "${home}/.bash_profile":
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
-        require => [User[$title],File["${home}/.bash_profile"]]
+        require => [User[$user],File["${home}/.bash_profile"]]
       }
       if $managebashrc {
         file_line { "${home}/.bashrc":
           path    => "${home}/.bashrc",
           line    => '[ -d .profile.d ] && [ -z "$PS1" ] && for file in ./.profile.d/*.sh; do [ -e "$file" ] && source $file || true; done',
-          require => [User[$title],File["${home}/.bashrc"]]
+          require => [User[$user],File["${home}/.bashrc"]]
         }
       }
 
@@ -241,14 +227,14 @@ define users::localuser ( $ensure='present', $uid=undef, $logingroup=undef, $gro
         owner   => $uid,
         group   => $logingroup,
         mode    => '0750',
-        require => User[$title]
+        require => User[$user]
       }
       file { "${home}/.ssh":
         ensure  => directory,
         owner   => $uid,
         group   => $logingroup,
         mode    => '0700',
-        require => User[$title]
+        require => User[$user]
       }
 
     }

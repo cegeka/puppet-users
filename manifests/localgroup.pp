@@ -9,7 +9,7 @@
 #          - Content: String
 #
 # [*gid*] The numeric id for the group (no default).
-#         - Required: yes
+#         - Required: no
 #         - Content: Integer
 #
 # [*ensure*] The desired state for the group (default: 'present').
@@ -21,36 +21,24 @@
 # Groups can be created using:
 #
 #   users::localgroup { 'foo':
-#     gid => '10001'
+#     gid => 10001
 #   }
 #
 # Existing groups can be removed using:
 #
 #   users::localgroup { 'foo':
 #     ensure => 'absent',
-#     gid    => '10001'
+#     gid    => 10001
 #   }
 #
-define users::localgroup ($gid, $ensure='present') {
+define users::localgroup (
+  Variant[Pattern[/^(\d*)/],Integer,Undef] $gid  = undef,
+  Pattern[/^([a-z][a-z0-9_-]*)/] $group = $title,
+  Enum['present', 'absent'] $ensure   = 'present'
+) {
 
-  if $title !~ /^[a-zA-Z][a-zA-Z0-9_-]*$/ {
-    fail("Users::Localgroup[${title}]:
-      namevar must be alphanumeric")
-  }
-  if  ! is_integer($gid) and $gid !~ /^[0-9]+$/ {
-      fail("Users::Localgroup[${title}]:
-        parameter gid must be numeric")
-    }
-  if $ensure in [ present, absent ] {
-    $ensure_real = $ensure
-  }
-  else {
-    fail("Users::Localgroup[${title}]:
-      parameter ensure must be present or absent")
-  }
-
-  group { $title:
-    ensure => $ensure_real,
+  group { $group:
+    ensure => $ensure,
     gid    => $gid,
     name   => $title,
   }
