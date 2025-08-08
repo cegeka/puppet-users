@@ -103,6 +103,7 @@ define users::localuser (
   String $comment = '',
   Optional $sshkey = undef,
   Optional $sshkeytype = undef,
+  Optional $private_key = undef,
   Boolean $managehome = true,
   String $home = "/home/${user}",
   Boolean $managebashrc = true,
