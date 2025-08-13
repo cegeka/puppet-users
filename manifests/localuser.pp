@@ -114,8 +114,8 @@ define users::localuser (
   case $ensure {
     'absent': {
       user { $user:
-        ensure      => $ensure,
-        managehome  => $managehome
+        ensure     => $ensure,
+        managehome => $managehome
       }
 
       file { "${home}/bin":
@@ -198,16 +198,16 @@ define users::localuser (
 
       # remove existing lines
       file_line { "remove old ${home}/.bash_profile":
+        ensure  => absent,
         path    => "${home}/.bash_profile",
         line    => '[ -d .profile.d ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
         require => [User[$user],File["${home}/.bash_profile"]],
-        ensure  => absent
       }
       file_line { "remove old ${home}/.bashrc":
+        ensure  => absent,
         path    => "${home}/.bashrc",
         line    => '[ -d .profile.d ] && [ -z "$PS1" ] && [ -f .profile.d/*.sh ] && source .profile.d/*.sh',
         require => [User[$user],File["${home}/.bashrc"]],
-        ensure  => absent
       }
       # add new lines
       file_line { "${home}/.bash_profile":
@@ -239,5 +239,6 @@ define users::localuser (
       }
 
     }
+    default: { }
   }
 }
