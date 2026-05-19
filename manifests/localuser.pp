@@ -115,8 +115,7 @@ define users::localuser (
     'absent': {
       user { $user:
         ensure     => $ensure,
-        managehome => $managehome,
-        before     => Group[$logingroup],   # ensure user is removed before its primary group
+        managehome => $managehome
       }
 
       file { "${home}/bin":
